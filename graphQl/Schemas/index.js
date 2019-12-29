@@ -15,9 +15,18 @@ type User{
   events:[Event!]
 }
 
+type Booking {
+    _id:ID!
+    user:User
+    event:Event
+}
 type RootQuery {
     events:[Event]
     users:[User]
+    booking:[Booking]
+}
+input BookingInput{
+    eventId:ID!
 }
 input EventInput{
     title: String!,
@@ -33,11 +42,13 @@ input UserInput {
 type RootMutation {
     createEvents(eventInput:EventInput):Event
     createUser(userInput: UserInput) : User
+    createBooking(bookingInput: BookingInput) : Booking
 }
 
 schema {
     query:RootQuery,
     mutation : RootMutation
+
 }
 
 `);

@@ -1,16 +1,16 @@
 const Event = require("../../models/Events");
 const Booking = require("../../models/Booking");
   module.exports ={
-    createBooking :(args) => {
+    createBooking :(args ,req) => {
+      if(!req.isAuth){
+        throw new Error('Unauthorized')
+      }
       return Event.findById(args.bookingInput.eventId)
         .then(evnt => {
           if (!evnt) throw new Error("Event Not Found!!");
-          return evnt.createdBy;
-        })
-        .then(usr => {
           const booking = new Booking({
             event: args.bookingInput.eventId,
-            user: usr
+            user: req.userId
           });
           return booking.save();
         })

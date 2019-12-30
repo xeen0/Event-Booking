@@ -1,14 +1,16 @@
 const Event = require("../../models/Events");
 
-
 module.exports = {
-    createEvent : (args) => {
+    createEvents : (args ,req) => {
+      if(!req.isAuth){
+        throw new Error('Unauthorized')
+      }
         const event = new Event({
           title: args.eventInput.title,
           description: args.eventInput.description,
           price: args.eventInput.price,
           date: new Date(args.eventInput.date),
-          createdBy: args.eventInput.createdBy
+          createdBy: req.userId
         });
         return event
           .save()

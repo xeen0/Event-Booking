@@ -1,7 +1,8 @@
-const User = require("../../models/Users")
+const User = require("../../models/Users");
 const bcrypt = require("bcrypt");
- module.exports = {
-  createUser : (args) => {
+const jwt = require("jsonwebtoken");
+module.exports = {
+  createUser: args => {
     return User.find({ email: args.userInput.email })
       .then(usr => {
         if (!usr.length == 0)
@@ -18,7 +19,28 @@ const bcrypt = require("bcrypt");
       .then(usr => usr)
       .catch(err => {
         throw err;
-      })
+      });
   },
-  users :  () => User.find()
- }
+  users: () => User.find(),
+  login: async ({ email, password }) => {
+    try {
+      const user = await User.findOne({ email: email });
+      if (!user) throw new Error("Incorrect Email!");
+      const isEqual = await bcrypt.compare(password, user.password);
+      if (!isEqual) throw new Error("Incorrect password!");
+      const token = await jwt.sign(
+        { userId: user._id, email: user.email },
+        'SECREAT_KEY',
+        {expiresIn: '1h'}
+      );
+      return {
+        _id:user.id,
+        token:token,
+        expiration:1
+      }
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  }
+};

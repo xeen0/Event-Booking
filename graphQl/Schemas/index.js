@@ -20,11 +20,13 @@ type Booking {
     user:User
     event:Event
 }
-type RootQuery {
-    events:[Event]
-    users:[User]
-    booking:[Booking]
+
+type AuthData {
+    _id:ID!
+    token:String!
+    expiration:Int!
 }
+
 input BookingInput{
     eventId:ID!
 }
@@ -38,6 +40,13 @@ input EventInput{
 input UserInput {
   email:String!
   password:String!
+}
+
+type RootQuery {
+    events:[Event]
+    users:[User]
+    booking:[Booking]
+    login(email : String! , password : String!):AuthData!
 }
 type RootMutation {
     createEvents(eventInput:EventInput):Event

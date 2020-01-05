@@ -1,0 +1,37 @@
+.mainNavigation {
+    display: flex;
+    align-content: center;
+    background-color:azure;
+    font-size: 1.2rem;
+    left: 0px;
+    top: 0px;
+    height: 5rem;
+}
+
+.mainNavigation__items ul{
+    display: flex;
+    align-content: center;
+    font-size: 1.5rem;
+    position: absolute;
+    right: 15px;
+    padding-right: 15px;
+}
+.mainNavigation__items li{
+    list-style: none;
+}
+
+.mainNavigation__items a  {
+    padding: 1rem;
+    list-style-type: none;
+    text-justify: auto;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.mainNavigation__items a :hover,
+.mainNavigation__items a :active,
+.mainNavigation__items a.active
+{
+    color: rgb(95, 167, 180);
+    
+}

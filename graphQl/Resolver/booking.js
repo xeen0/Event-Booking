@@ -1,7 +1,7 @@
 const Event = require("../../models/Events");
 const Booking = require("../../models/Booking");
-  module.exports ={
-    createBooking :(args ,req) => {
+module.exports ={
+    createBooking : (args,req) => {
       if(!req.isAuth){
         throw new Error('Unauthorized')
       }
@@ -17,8 +17,9 @@ const Booking = require("../../models/Booking");
         .then(res => res)
         .catch(err => {
           console.log(err);
-          throw err;
+          throw err; 
         });
     },
     booking :() => Booking.find().populate("user")
   }
+  

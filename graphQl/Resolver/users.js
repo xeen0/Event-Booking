@@ -11,6 +11,7 @@ module.exports = {
       })
       .then(hashedPassword => {
         const user = new User({
+          username:args.userInput.username,
           email: args.userInput.email,
           password: hashedPassword
         });

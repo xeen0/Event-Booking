@@ -2,7 +2,7 @@ import {gql } from 'apollo-boost'
 
 export const typeDefs = gql`
     extend type Mutation {
-        TokenValue:String
+        TokenValue(token:String):String
     }
 `
 const GET_TOKEN = gql`
@@ -13,7 +13,7 @@ const GET_TOKEN = gql`
 
 export  const resolver = {
     Mutation:{
-        TokkenValue:(_root , _args , {cache} ) => {
+        TokenValue:(_root , _args , {cache} ) => {
             cache.writeQuery({
                 query:GET_TOKEN,
                 data:{token:localStorage.AuthToken}

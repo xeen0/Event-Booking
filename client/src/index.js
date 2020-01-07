@@ -10,7 +10,7 @@ import { onError } from "apollo-link-error";
 import "./index.css";
 import App from "./App";
 import {typeDefs , resolver} from './graphql/resolver';
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 import * as serviceWorker from "./serviceWorker";
 
 const httpLink = createHttpLink({

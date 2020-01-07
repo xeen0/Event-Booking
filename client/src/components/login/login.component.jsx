@@ -1,8 +1,12 @@
 import React from "react";
-import { useMutation, useQuery } from "@apollo/react-hooks";
+
+import { useMutation, useApolloClient } from "@apollo/react-hooks";
 import gql from "graphql-tag";
+
 import { AUTH_TOKEN } from "../../constants";
 import { withRouter } from "react-router-dom";
+
+import { Card, Form, Button } from "react-bootstrap";
 const LOGIN_USER = gql`
   mutation login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
@@ -11,11 +15,19 @@ const LOGIN_USER = gql`
   }
 `;
 
+const GET_TOKEN = gql`
+  {
+    token @client
+  }
+`;
 
 const Login = props => {
   var email = "",
     password = "";
-  const [login, { loading, error, data }] = useMutation(LOGIN_USER, {
+
+  const client = useApolloClient();
+
+  const [login, { loading, error }] = useMutation(LOGIN_USER, {
     errorPolicy: "all"
   });
 
@@ -23,40 +35,51 @@ const Login = props => {
   if (error) {
     return <p>Error :( </p>;
   }
-
+  const onSubmit = e => {
+    e.preventDefault();
+    login({ variables: { email: email, password: password } })
+      .then(usr => {
+        localStorage.setItem(AUTH_TOKEN, usr.data.login.token);
+        return usr;
+      })
+      .then(usr => {
+        client.writeData({ data: { token: usr.data.login.token } });
+        props.history.push("/main");
+      })
+      .then(() =>
+        client.readQuery({
+          query: GET_TOKEN
+        })
+      )
+      .then(token => console.log(token))
+      .catch(e => {
+        console.log(e);
+      });
+  };
   return (
-    <form
-      onSubmit={e => {
-        e.preventDefault();
-        login({ variables: { email: email, password: password } })
-          .then(usr => {
-            localStorage.setItem(AUTH_TOKEN, usr.data.login.token);
-            props.history.push("/main");
-          })
-          .catch(e => {
-            console.log(e);
-          });
-      }}
-    >
-      <div>
-        <label htmlFor="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          onChange={e => (email = e.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="password">Password</label>
-        <input
-          type="password"
-          onChange={e => (password = e.target.value)}
-          id="password"
-        />
-      </div>
-      <button type="submit">Login </button>
-    </form>
+    <Card>
+      <Card.Body>
+        <Form>
+          <Form.Group controlId="formBasicEmail">
+            <Form.Label>Email address</Form.Label>
+            <Form.Control type="email" placeholder="Enter email" onChange = {e =>email = e.target.value}/>
+            <Form.Text className="text-muted">
+              We'll never share your email with anyone else.
+            </Form.Text>
+          </Form.Group>
+
+          <Form.Group controlId="formBasicPassword">
+            <Form.Label>Password</Form.Label>
+            <Form.Control type="password" placeholder="Password" onChange = {e =>password = e.target.value}/>
+          </Form.Group>
+         
+          <Button variant="primary" type="submit">
+            Submit
+          </Button>
+        </Form>
+      </Card.Body>
+    </Card>
   );
 };
 
-export default  withRouter(Login);
+export default withRouter(Login);

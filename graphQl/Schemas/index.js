@@ -1,5 +1,5 @@
-const { buildSchema } = require('graphql')
-module.exports = buildSchema(`
+const { gql } = require('apollo-server-express')
+module.exports = gql`
 type Event{
     _id:ID!
     title: String!
@@ -44,22 +44,21 @@ input UserInput {
   password:String!
 }
 
-type RootQuery {
-    events:[Event]
+type Query {
     users:[User]
-    booking:[Booking]
+    events:[Event]
+    booking:[Event]
 }
-type RootMutation {
+type Mutation {
     login(email : String! , password : String!):AuthData!
     createEvents(eventInput:EventInput):Event
     createUser(userInput: UserInput) : User
     createBooking(bookingInput: BookingInput) : Booking
 }
-
-schema {
-    query:RootQuery,
-    mutation : RootMutation
-
+type Subscription {
+    userSubscription : User
 }
 
-`);
+
+
+`;

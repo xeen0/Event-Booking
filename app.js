@@ -3,26 +3,27 @@ const bodyParser = require("body-parser");
 const graphqlHttp = require("express-graphql");
 const mongoose = require("mongoose");
 const cors = require('cors')
-const graphQlSchemas = require('./graphQl/Schemas/index')
-const graphQlResolvers = require('./graphQl/Resolver/index')
+const {createServer } =require('http')
+const {ApolloServer} = require('apollo-server-express')
+
+const typeDefs = require('./graphQl/Schemas/index')
+const resolvers = require('./graphQl/Resolver/index')
 
 const userAuth = require('./middlewares/is-auth')
 
+const apolloServer = new ApolloServer({typeDefs , resolvers})
 const app = express();
 app.use(cors())
 app.use(bodyParser());
 app.use(userAuth)
 
-app.use(
-  "/graphql",
-  graphqlHttp({
-    schema: graphQlSchemas,
-    rootValue:graphQlResolvers ,
-    graphiql: true
-  })
-);
+apolloServer.applyMiddleware({app})
+
+const httpServer = createServer(app)
+
+apolloServer.installSubscriptionHandlers(httpServer)
 
 mongoose
   .connect("mongodb://localhost:27017/graphql")
-  .then(app.listen(8000, () => console.log("Running server at 8000...")))
+  .then(httpServer.listen({ port: 4000 }, () => console.log("Running server at 4000...")))
   .catch(err => console.log(err));

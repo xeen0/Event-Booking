@@ -1,9 +1,10 @@
 const Event = require("../../models/Events");
 const Booking = require("../../models/Booking");
-module.exports ={
-    createBooking : (args,req) => {
-      if(!req.isAuth){
-        throw new Error('Unauthorized')
+module.exports = {
+  Mutation: {
+    createBooking: (_,args, req) => {
+      if (!req.isAuth) {
+        throw new Error("Unauthorized");
       }
       return Event.findById(args.bookingInput.eventId)
         .then(evnt => {
@@ -17,9 +18,11 @@ module.exports ={
         .then(res => res)
         .catch(err => {
           console.log(err);
-          throw err; 
+          throw err;
         });
-    },
-    booking :() => Booking.find().populate("user")
+    }
+  },
+  Query: {
+    booking: () => Booking.find().populate("user")
   }
-  
+};
